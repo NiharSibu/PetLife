@@ -3,7 +3,7 @@ node {
  notify('Job Started') 
      
   stage('Git-Checkout') {
-   git 'https://github.com/NiharSibu/PetClinic.git'
+   git 'https://github.com/NiharSibu/PetLife.git'
   }
     
  def project_path="01-Jenkins/Code/petclinic"
@@ -44,7 +44,7 @@ node {
   }
  
   stage('Geting Ready For Ansible') {
-  sh label: 'Docker', script: 'cp -rf target/*.war ../../Ansible/ansible/04-Tomcat/templates/apps/'
+  sh label: 'Docker', script: 'cp -rf target/*.war ../../../ansible/04-Tomcat/templates/apps/'
   sh label: 'Jenkins', script: "echo '<h1> TASK BUILD ID: ${env.BUILD_DISPLAY_NAME}</h1>' > ../../Ansible/ansible/04-Tomcat/templates/apps/index.html"
  }  
 
