@@ -55,19 +55,18 @@ dir(project_terra) {
  stage('Git-Checkout for ansible') {
    git 'https://github.com/NiharSibu/Ansible.git'
   }
-  def project_ansible="ansible/04-Tomcat"
-  dir(project_ansible) { 
   stage('Geting Ready For Ansible') {
     def server= Artifactory.server 'Artifactory'
         def downloadSpec = """{
             "files": [{
             "pattern": "petclinic/petclinic.war",
-            "target": "templates/apps/" }]
+            "target": "ansible/04-Tomcat/templates/apps/" }]
         }"""
     server.download(downloadSpec)  
   sh label: 'Jenkins', script: "echo '<h1> TASK BUILD ID: ${env.BUILD_DISPLAY_NAME}</h1>' > ansible/04-Tomcat/templates/apps/index.html"
  }
- 
+def project_ansible="ansible/04-Tomcat"
+dir(project_ansible) { 
 stage('Prod Deployment on AWS'){
 sh label: 'terraform', script: 'ansible-playbook -i /../../04-Terraform/jenkins-ci.ini -u ubuntu --key /root/.ssh/*.pem web-playbook.yaml'
      } 
