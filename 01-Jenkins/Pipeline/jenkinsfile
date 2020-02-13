@@ -42,9 +42,15 @@ node {
  stage('Git-Checkout for ansible') {
    git 'https://github.com/NiharSibu/Ansible.git'
   }
- 
+  
   stage('Geting Ready For Ansible') {
-  sh label: 'Docker', script: 'cp -rf target/*.war ansible/04-Tomcat/templates/apps/'
+    def server= Artifactory.server 'Artifactory'
+        def downloadSpec = """{
+            "files": [{
+            "pattern": "petclinic/petclinic.war",
+            "target": "ansible/04-Tomcat/templates/apps/" }]
+        }"""
+    server.download(downloadSpec)  
   sh label: 'Jenkins', script: "echo '<h1> TASK BUILD ID: ${env.BUILD_DISPLAY_NAME}</h1>' > ansible/04-Tomcat/templates/apps/index.html"
  }  
 
