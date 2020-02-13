@@ -35,10 +35,7 @@ node {
         server.upload(uploadSpec)
      }
     }
-   }
- }
- 
- node{
+    
    stage('Git-Checkout for Teraform') {
    git 'https://github.com/NiharSibu/Terraform.git'
   }
@@ -49,9 +46,11 @@ dir(project_terra) {
    sh label: 'terraform', script: '/bin/terraform  init'
    sh label: 'terraform', script: '/bin/terraform  apply -input=false -auto-approve'
    }
+  }
  }
 }
- node {
+
+node {
  stage('Git-Checkout for ansible') {
    git 'https://github.com/NiharSibu/Ansible.git'
   }
