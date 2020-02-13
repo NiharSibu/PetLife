@@ -60,7 +60,7 @@ node {
 
 def project_terra="04-Terraform"
 dir(project_terra) {
-   stage('Prod Deployment on AWS'){
+   stage('Instance Creation on AWS'){
    sh label: 'terraform', script: '/bin/terraform  init'
    sh label: 'terraform', script: '/bin/terraform  apply -input=false -auto-approve'
    }
