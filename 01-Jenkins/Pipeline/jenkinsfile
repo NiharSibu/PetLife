@@ -65,6 +65,13 @@ dir(project_terra) {
    sh label: 'terraform', script: '/bin/terraform  apply -input=false -auto-approve'
    }
 }
+
+def project_terra="ansible/04-Tomcat"
+dir(project_terra) {
+stage('Prod Deployment on AWS'){
+sh label: 'terraform', script: 'ansible-playbook -i /../../04-Terraform/jenkins-ci.ini -u ubuntu --key /root/.ssh/*.pem web-playbook.yaml'
+     } 
+   }
 }
 
 notify('Job Completed')   
