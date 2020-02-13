@@ -38,6 +38,7 @@ node {
         server.upload(uploadSpec)
      }
     }
+   }
 
  stage('Git-Checkout for ansible') {
    git 'https://github.com/NiharSibu/Ansible.git'
@@ -72,7 +73,6 @@ stage('Prod Deployment on AWS'){
 sh label: 'terraform', script: 'ansible-playbook -i /../../04-Terraform/jenkins-ci.ini -u ubuntu --key /root/.ssh/*.pem web-playbook.yaml'
      } 
    }
-}
 
 notify('Job Completed')   
 } catch (err) {
