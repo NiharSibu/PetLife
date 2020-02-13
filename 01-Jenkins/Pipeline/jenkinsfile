@@ -52,15 +52,19 @@ node {
         }"""
     server.download(downloadSpec)  
   sh label: 'Jenkins', script: "echo '<h1> TASK BUILD ID: ${env.BUILD_DISPLAY_NAME}</h1>' > ansible/04-Tomcat/templates/apps/index.html"
- }  
+ }
+ 
+  stage('Git-Checkout for Teraform') {
+   git 'https://github.com/NiharSibu/Terraform.git'
+  }
 
-}
-def project_terra="04-Terraform/03-Ansible-Deploy"
+def project_terra="04-Terraform"
 dir(project_terra) {
    stage('Prod Deployment on AWS'){
    sh label: 'terraform', script: '/bin/terraform  init'
    sh label: 'terraform', script: '/bin/terraform  apply -input=false -auto-approve'
    }
+}
 }
 
 notify('Job Completed')   
