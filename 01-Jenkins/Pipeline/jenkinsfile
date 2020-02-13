@@ -39,23 +39,10 @@ node {
      }
     }
    }
-
- stage('Git-Checkout for ansible') {
-   git 'https://github.com/NiharSibu/Ansible.git'
-  }
-  
-  stage('Geting Ready For Ansible') {
-    def server= Artifactory.server 'Artifactory'
-        def downloadSpec = """{
-            "files": [{
-            "pattern": "petclinic/petclinic.war",
-            "target": "ansible/04-Tomcat/templates/apps/" }]
-        }"""
-    server.download(downloadSpec)  
-  sh label: 'Jenkins', script: "echo '<h1> TASK BUILD ID: ${env.BUILD_DISPLAY_NAME}</h1>' > ansible/04-Tomcat/templates/apps/index.html"
  }
  
-  stage('Git-Checkout for Teraform') {
+ node{
+   stage('Git-Checkout for Teraform') {
    git 'https://github.com/NiharSibu/Terraform.git'
   }
 
@@ -65,15 +52,30 @@ dir(project_terra) {
    sh label: 'terraform', script: '/bin/terraform  init'
    sh label: 'terraform', script: '/bin/terraform  apply -input=false -auto-approve'
    }
+ }
 }
-
-def project_ansible="ansible/04-Tomcat"
-dir(project_ansible) {
+ node {
+ stage('Git-Checkout for ansible') {
+   git 'https://github.com/NiharSibu/Ansible.git'
+  }
+  def project_ansible="ansible/04-Tomcat"
+  dir(project_ansible) { 
+  stage('Geting Ready For Ansible') {
+    def server= Artifactory.server 'Artifactory'
+        def downloadSpec = """{
+            "files": [{
+            "pattern": "petclinic/petclinic.war",
+            "target": "templates/apps/" }]
+        }"""
+    server.download(downloadSpec)  
+  sh label: 'Jenkins', script: "echo '<h1> TASK BUILD ID: ${env.BUILD_DISPLAY_NAME}</h1>' > ansible/04-Tomcat/templates/apps/index.html"
+ }
+ 
 stage('Prod Deployment on AWS'){
 sh label: 'terraform', script: 'ansible-playbook -i /../../04-Terraform/jenkins-ci.ini -u ubuntu --key /root/.ssh/*.pem web-playbook.yaml'
      } 
    }
-
+}
 notify('Job Completed')   
 } catch (err) {
   notify("Error ${err}")
